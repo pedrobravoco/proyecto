@@ -20,12 +20,54 @@ def corregir(boid,width,height,border=25):
     return boid
 
 def moveCloser(fish,boids):
+    x=0
+    y=0
+    vecindad=boids
+    for v in vecindad:
+        x=fish[0][0]-v[0][0][0]
+        y=fish[0][1]-v[0][0][1]
+    x=x/len(vecindad)
+    y=y/len(vecindad)
+    fish[1][0]=fish[1][0]/len(vecindad)
+    fish[1][1]=fish[1][1]/len(vecindad)
     return fish
 
 def moveWith(fish,boids):
+    x=0
+    y=0
+    vecindad=boids
+    for v in vecindad:
+        x=fish[1][0]
+        y=fish[1][1]
+    x=x/len(vecindad)
+    y=y/len(vecindad)
     return fish
 
 def moveAway(fish,boids,min_dist=20):
+    x=0
+    y=0
+    numeroCercanos=0
+    vecindad=boids
+    for v in vecindad:
+        if distancia(fish[0][0],v[0][0],fish[0][1],v[0][1])<min_dist:
+            numerosCercanos+=1
+            difx=fish[0][0]-v[0][0]
+            dify=fish[0][1]-v[0][1]
+            if difx<=0:
+                difx=math.sqrt(min_dist)-difx
+            else:
+                difx=-(math.sqrt(min_dist))-difx
+            if dify<=0:
+                dify=math.sqrt(min_dist)-dify
+            else:
+                dify=-(math.sqrt(min_dist))-dify
+        x=x+difx
+        y=y+dify
+    if numerosCercanos==0:
+        return fish
+    fish[0][0]=-(fish[0][0])/len(vecindad)
+    fish[0][1]=-(fish[0][1])/len(vecindad)
+            
     return fish
 
 def move(fish, max_speed):
