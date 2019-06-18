@@ -13,20 +13,17 @@ def generarCardumen(n,w,h,speed=10):
 def distancia(x1,x2,y1,y2):
     distx=x1-x2
     disty=y1-y2
-    a=math.sqrt((distx**2)+(disty**2))
+    a=math.sqrt(distx*distx+disty*disty)
     return a
 def corregir(boid,width,height,border=25):
-    print(boid)
-    x,y=boid[0][0],boid[0][1]
-    vx,vy=boid[1][0],boid[1][1]
-    if x< border and vx<0:
-        boid[1][0]=(-1*boid[1][0]*random.randint(1,10))
-    if x>(width-border) and vx>0:
-        boid[1][0]=(-1*boid[1][0]*random.randint(1,10))
-    if x< border and vx<0:
-        boid[1][1]=(-1*boid[1][1]*random.randint(1,10))
-    if x>(height-border)and vx>0:
-        boid[1][1]=(-1*boid[1][1]*random.randint(1,10))
+    if boid[0][0]< border and boid[1][0]<0:
+        boid[1][0]=-boid[1][0]*random.randint(1,10)
+    if boid[0][0]>(width-border) and boid[1][0]>0:
+        boid[1][0]=-boid[1][0]*random.randint(1,10)
+    if boid[0][1]< border and boid[1][1]<0:
+        boid[1][1]=-boid[1][1]*random.randint(1,10)
+    if boid[0][1]>(height-border)and boid[1][1]>0:
+        boid[1][1]=-boid[1][1]*random.randint(1,10)
     
     return boid
 
@@ -39,12 +36,12 @@ def moveCloser(fish,boids):
     for v in vecindad:
         if v[0][0]==fish[0][0] and v[0][1]==fish[0][1]:
             continue
-        x+=(fish[0][0]-v[1][0])
-        y+=(fish[0][1]-v[1][1])
-    x=x/len(boids)
-    y=y/len(boids)
-    fish[1][0]-=(x/200)
-    fish[1][1]-=(y/200)
+        x+=(fish[0][0]-v[0][0])
+        y+=(fish[0][1]-v[0][1])
+    x=x/len(vecindad)
+    y=y/len(vecindad)
+    fish[1][0]-=(x/100)
+    fish[1][1]-=(y/100)
     return fish
 
 def moveWith(fish,boids):
@@ -78,22 +75,22 @@ def moveAway(fish,boids,min_dist=20):
             if difx<=0:
                 difx=math.sqrt(min_dist)-difx
             else:
-                difx=-(math.sqrt(min_dist))-difx
+                difx=-math.sqrt(min_dist)-difx
             if dify<=0:
                 dify=math.sqrt(min_dist)-dify
             else:
-                dify=-(math.sqrt(min_dist))-dify
+                dify=-math.sqrt(min_dist)-dify
             x+=difx
             y+=dify
     if numerosCercanos==0:
-        return fish
-    fish[1][0]-= x/len(vecindad)
-    fish[1][1]-= y/len(vecindad)
+        return 
+    fish[1][0]-= x/5
+    fish[1][1]-= y/5
             
     return fish
 
 def move(fish, max_speed):
-    if abs(fish[1][0])>max_speed and abs(fish[1][1])>max_speed:
+    if abs(fish[1][0])>max_speed or abs(fish[1][1])>max_speed:
         escala=max_speed/max(abs(fish[1][0]),abs(fish[1][1]))
         fish[1][0]*=escala
         fish[1][1]*=escala
@@ -102,16 +99,13 @@ def move(fish, max_speed):
     return fish
 
 def vecindad(pez_i,boids,max_distance):
-    if pez_i==0:
-        return boids
-    else:
-        for boid in boids:
-            boids1=[]
-            for otro_boid in boids:
-                if boid==otro_boid:
-                    continue
-                distancia1=distancia(boid[0][0],otro_boid[0][0],boid[0][1],otro_boid[0][1])
-                if distancia1<max_distance:
-                    boids1.append(otro_boid)
+    pez=boids[pez_i]
+    boids1=[]
+    for otro_boid in boids:
+        if pez==otro_boid:
+            continue
+        distancia1=distancia(pez[0][0],otro_boid[0][0],pez[0][1],otro_boid[0][1])
+        if distancia1<max_distance:
+            boids1.append(otro_boid)
                 
-    return boids1
+    return boids
